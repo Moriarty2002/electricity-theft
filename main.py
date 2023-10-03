@@ -16,3 +16,4 @@ if __name__ == '__main__':
     application.add_handlers([cmd_handler_start, cmd_handler_default, cb_handler_check_start])
 
     application.run_polling()
+#FORZA NAPOLI
