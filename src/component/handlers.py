@@ -1,5 +1,6 @@
 from telegram.ext import CommandHandler, MessageHandler, CallbackQueryHandler, filters
-from component.functions import *
+
+from src.component.functions import start, default_response, cb_check
 
 # ****** Command handlers *******
 

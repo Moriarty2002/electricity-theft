@@ -1,6 +1,6 @@
 from telegram import InlineKeyboardMarkup, InlineKeyboardButton
 
-from connector.kb_utils import get_kb_check_start
+from src.connector.kb_utils import get_kb_check_start
 
 #TODO: Aggiungere query per ritrovare filtri su regione
 

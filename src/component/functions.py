@@ -1,7 +1,7 @@
 from telegram import Update
 from telegram.ext import ContextTypes
 
-from component.keyboard import *
+from src.component.keyboard import *
 
 
 # ****** Commands ******
