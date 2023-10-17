@@ -6,8 +6,7 @@ This bot is used to check the electrical furniture price,
 without studying Campi Elettromagnetici and bestemmiare
 
 # TO-DO
-Markup: 
-        * Requisite analysis
-        * E/R & UML diagram
-        * Add user login
-        * Add cities
+Markup: - Requisite analysis
+        - E/R & UML diagram
+        - Add user login
+        - Add cities
