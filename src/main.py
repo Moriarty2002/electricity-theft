@@ -13,6 +13,6 @@ logging.basicConfig(
 if __name__ == '__main__':
     application = ApplicationBuilder().token(BOT_TOKEN).build()
 
-    application.add_handlers([cmd_handler_start, cmd_handler_default, cb_handler_check_start])
+    application.add_handlers([cmd_handler_start, cmd_handler_default, cb_handler_check_start, cb_handler_add])
 
     application.run_polling()

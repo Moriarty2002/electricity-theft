@@ -27,3 +27,13 @@ async def cb_check(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup=kb_check_start
     )
     await context.bot.answerCallbackQuery(callback_query_id=update.callback_query.id)
+
+
+async def cb_add(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    # TODO: Check if exists a better auth method
+    await context.bot.send_message(
+        chat_id=update.effective_chat.id,
+        text="Per aggiungere una bolletta devi autenticarti",
+        reply_markup=kb_auth
+    )
+    await context.bot.answerCallbackQuery(callback_query_id=update.callback_query.id)

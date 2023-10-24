@@ -13,5 +13,19 @@ def get_kb_check_start():
             InlineKeyboardButton(text="Campania", callback_data="Campania")
         ]
     ]
+    return result
+
+
+def get_kb_city(regione):
+    result = []
+    # get data from db here filtering by regione
+    # for the moment we write it manually
+    result = [
+        [
+            InlineKeyboardButton(text="Avellino", callback_data="Avellino"),
+            InlineKeyboardButton(text="Caserta", callback_data="Caserta"),
+            InlineKeyboardButton(text="Napoli", callback_data="Napoli")
+        ]
+    ]
 
     return result
