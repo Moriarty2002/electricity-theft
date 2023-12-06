@@ -1,0 +1,2 @@
+DBMS: MariaDB
+VERSION: 11.2.2
