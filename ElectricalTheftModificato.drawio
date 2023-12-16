@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2023-12-16T11:03:28.120Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0" etag="SRb_oD-SVG4N9WFyqYbo" version="22.1.11" type="github" pages="3">
+<mxfile host="app.diagrams.net" modified="2023-12-16T11:28:03.478Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0" etag="uVAL7dA0_RxiI7_oKwTy" version="22.1.11" type="github" pages="3">
   <diagram name="Schema Scheletro" id="E_TyFUatoE3oYiJs9Rrp">
     <mxGraphModel dx="1050" dy="566" grid="1" gridSize="30" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -29,7 +29,7 @@
     </mxGraphModel>
   </diagram>
   <diagram id="EaGpRGTQMnbfBDcKuHUa" name="Diagramma ER">
-    <mxGraphModel dx="350" dy="189" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1050" dy="566" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -84,16 +84,6 @@
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="369.9" y="280" as="sourcePoint" />
             <mxPoint x="369.9" y="260" as="targetPoint" />
-            <Array as="points" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="g04TC7ZU03YRCO3gxd3n-10" value="Tipo Fornitura" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=9;fontFamily=Helvetica;fontColor=default;rotation=270;" parent="1" vertex="1">
-          <mxGeometry x="290" y="232" width="60" height="10" as="geometry" />
-        </mxCell>
-        <mxCell id="g04TC7ZU03YRCO3gxd3n-11" value="" style="endArrow=oval;html=1;rounded=0;labelBackgroundColor=default;strokeColor=default;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=11;fontColor=default;shape=connector;endFill=0;exitX=0.664;exitY=0.163;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="NLEcic0KsFE_uK4bu-8Y-3" edge="1">
-          <mxGeometry width="50" height="50" relative="1" as="geometry">
-            <mxPoint x="310" y="290" as="sourcePoint" />
-            <mxPoint x="320" y="270" as="targetPoint" />
             <Array as="points" />
           </mxGeometry>
         </mxCell>
@@ -254,17 +244,17 @@
         <mxCell id="eDtCk_GJ_s8FMwtHKJ8D-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.555;entryY=1.016;entryDx=0;entryDy=0;entryPerimeter=0;endArrow=none;endFill=0;" parent="1" source="eDtCk_GJ_s8FMwtHKJ8D-1" target="NLEcic0KsFE_uK4bu-8Y-10" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="egXy7OtRkYVMqZqUxJr_-1" value="(0,N)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=4;fontFamily=Helvetica;fontColor=default;" vertex="1" parent="1">
+        <mxCell id="egXy7OtRkYVMqZqUxJr_-1" value="(0,N)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=4;fontFamily=Helvetica;fontColor=default;" parent="1" vertex="1">
           <mxGeometry x="490" y="400" width="10" height="10" as="geometry" />
         </mxCell>
-        <mxCell id="egXy7OtRkYVMqZqUxJr_-2" value="(1,1)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=4;fontFamily=Helvetica;fontColor=default;" vertex="1" parent="1">
+        <mxCell id="egXy7OtRkYVMqZqUxJr_-2" value="(1,1)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=4;fontFamily=Helvetica;fontColor=default;" parent="1" vertex="1">
           <mxGeometry x="490" y="350" width="10" height="10" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
   <diagram id="5ssLOUF_plM-beLufLFx" name="Diagramma ER rifinito">
-    <mxGraphModel dx="500" dy="270" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1050" dy="566" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -354,16 +344,6 @@
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="379.9" y="290" as="sourcePoint" />
             <mxPoint x="379.9" y="270" as="targetPoint" />
-            <Array as="points" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="6dh9kBVaKR-0AqySw2vX-63" value="Tipo Fornitura" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=9;fontFamily=Helvetica;fontColor=default;rotation=270;" parent="1" vertex="1">
-          <mxGeometry x="300" y="242" width="60" height="10" as="geometry" />
-        </mxCell>
-        <mxCell id="6dh9kBVaKR-0AqySw2vX-64" value="" style="endArrow=oval;html=1;rounded=0;labelBackgroundColor=default;strokeColor=default;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=11;fontColor=default;shape=connector;endFill=0;exitX=0.664;exitY=0.163;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="6dh9kBVaKR-0AqySw2vX-53" edge="1">
-          <mxGeometry width="50" height="50" relative="1" as="geometry">
-            <mxPoint x="320" y="300" as="sourcePoint" />
-            <mxPoint x="330" y="280" as="targetPoint" />
             <Array as="points" />
           </mxGeometry>
         </mxCell>
