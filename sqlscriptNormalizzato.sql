@@ -83,6 +83,7 @@ FROM Bolletta B
 JOIN Erogazione E on E.codContratto = B.CodContratto
 JOIN Localizzazione L on L.codContratto = B.CodContratto
 GROUP BY L.codProvincia
+WHERE B.Attiva = 'Y'
 
 -- CREATE REGIONI MATERIALIZED VIEW
 CREATE MATERIALIZED VIEW REGIONI AS  
