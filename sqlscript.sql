@@ -1,128 +1,213 @@
-REM   Script: Electricity Theft (w slash)
-REM   start
+REM   Script: Electrical Theft Definitive
+REM   w
 
-REM   Script: Electricity Theft pre procedure 
-
-
-REM   Chianese 
+REM   start 
 
 
--- Create sequence persona
-CREATE SEQUENCE seq_persona  
-INCREMENT BY 1  
-START WITH 1  
-NOMAXVALUE  
-NOMINVALUE  
-NOCYCLE  
+REM   Script electrical theft - progetto Basi di Dati (prof. Chianese)
+
+
+CREATE SEQUENCE seq_persona   
+INCREMENT BY 1   
+START WITH 1   
+NOMAXVALUE   
+NOMINVALUE   
+NOCYCLE   
 NOCACHE;
 
+CREATE SEQUENCE seq_contratti 
+INCREMENT BY 1 
+START WITH 1 
+NOMAXVALUE 
+NOMINVALUE 
+NOCYCLE 
+NOCACHE;
 
-CREATE TABLE Fornitore(   
-    p_iva int,   
-    Nome VARCHAR(50) NOT NULL,   
-    CONSTRAINT pk_fornitore PRIMARY KEY(p_iva)   
+CREATE TABLE Fornitore(    
+    p_iva int,    
+    Nome VARCHAR(50) NOT NULL,    
+    Num_bollette NUMBER DEFAULT 0, 
+     
+    CONSTRAINT pk_fornitore PRIMARY KEY(p_iva)    
 );
 
-CREATE TABLE Posizione(    
-    Provincia   VARCHAR(2),    
-    Regione     VARCHAR(30) NOT NULL,    
-    CONSTRAINT pk_posizione PRIMARY KEY(Provincia)    
+CREATE TABLE Posizione(     
+    Provincia   VARCHAR(2),     
+    Regione     VARCHAR(30) NOT NULL,        
+    Num_bollette NUMBER DEFAULT 0, 
+     
+    CONSTRAINT pk_posizione PRIMARY KEY(Provincia)     
 );
 
-CREATE TABLE Persona(   
-    IdPersona   INT DEFAULT seq_persona.NEXTVAL,   
-    NickName    VARCHAR(30),  
-    Nome        VARCHAR(30) NOT NULL,   
-    Cognome     VARCHAR(30) NOT NULL,   
-    TipologiaUtente CHAR(1) NOT NULL,   
-    Password    VARCHAR(64), -- for SHA-256  
-    CONSTRAINT pk_persona PRIMARY KEY(IdPersona)   
+CREATE TABLE Persona(    
+    IdPersona   INT DEFAULT seq_persona.NEXTVAL,    
+    NickName    VARCHAR(30),   
+    Nome        VARCHAR(30) NOT NULL,    
+    Cognome     VARCHAR(30) NOT NULL,    
+    TipologiaUtente CHAR(1) NOT NULL,    
+    Password    VARCHAR(64), -- for SHA-256   
+     
+    CONSTRAINT pk_persona PRIMARY KEY(IdPersona)    
 );
 
-CREATE TABLE Bolletta(   
-    CodContratto INT,   
-    Prezzo  DECIMAL NOT NULL,   
-    Consumo DECIMAL NOT NULL,   
-    Mese    INT NOT NULL,   
-    Anno    INT NOT NULL,   
+CREATE TABLE CONTRATTO( 
+    CodContratto    INT, 
+    Fornitore   INT, 
+    Posizione   VARCHAR(2), 
+    Persona INT, 
+     
+    CONSTRAINT pk_contratto PRIMARY KEY(CodContratto), 
+    CONSTRAINT fk_contratto_fornitore FOREIGN KEY(Fornitore) REFERENCES FORNITORE(p_iva), 
+    CONSTRAINT fk_contratto_posizione FOREIGN KEY(Posizione) REFERENCES POSIZIONE(Provincia), 
+    CONSTRAINT fk_contratto_persona FOREIGN KEY(Persona) REFERENCES PERSONA(IdPersona) 
+);
+
+CREATE TABLE Bolletta(    
+    CodContratto INT,    
+    Prezzo  DECIMAL NOT NULL,    
+    Consumo DECIMAL NOT NULL,    
+    Mese    INT NOT NULL,    
+    Anno    INT NOT NULL,    
     Attiva  CHAR(1) DEFAULT 'N',   
-    Fornitore   INT,   
-    Persona     INT,   
-    Posizione   VARCHAR(2) NOT NULL,   
-    URL	VARCHAR(32),  
-    CONSTRAINT pk_bolletta PRIMARY KEY(CodContratto, Mese, Anno),   
-    CONSTRAINT fk_fornitore FOREIGN KEY(Fornitore) REFERENCES Fornitore(p_iva),   
-    CONSTRAINT fk_persona FOREIGN KEY(Persona) REFERENCES Persona(IdPersona),   
-    CONSTRAINT fk_posizione FOREIGN KEY(Posizione) REFERENCES Posizione(Provincia), 
-    CONSTRAINT k_mese CHECK(Mese < 13 AND Mese > 0), 
+    URL	VARCHAR(32),   
+     
+    CONSTRAINT pk_bolletta PRIMARY KEY(CodContratto, Mese, Anno), 
+    CONSTRAINT fk_bolletta_contratto FOREIGN KEY(CodContratto) REFERENCES CONTRATTO(CodContratto), 
+    CONSTRAINT k_mese CHECK(Mese < 13 AND Mese > 0),  
     CONSTRAINT k_anno CHECK(Anno > 0) 
 );
 
--- CREATE COSTI MATERIALIZED VIEW
-CREATE MATERIALIZED VIEW costi AS   
-SELECT p.REGIONE, p.PROVINCIA, f.NOME, b.MESE, b.ANNO, AVG(b.PREZZO)/avg(b.CONSUMO) AS COSTO_MEDIO_KWH   
-FROM BOLLETTA b   
-JOIN POSIZIONE p ON b.POSIZIONE = p.PROVINCIA   
-JOIN FORNITORE f ON b.FORNITORE = f.P_IVA   
-GROUP BY p.REGIONE, p.PROVINCIA, f.NOME, b.MESE, b.ANNO  
-ORDER BY p.REGIONE ASC, p.PROVINCIA ASC;
+CREATE MATERIALIZED VIEW COSTI AS    
+SELECT C.Posizione, F.Nome, TRUNC(SUM(B.Prezzo)/SUM(B.Consumo), 2) AS CONSUMO_IN_KWH 
+FROM Bolletta B 
+JOIN CONTRATTO C ON B.CodContratto = C.CodContratto 
+JOIN FORNITORE F ON C.Fornitore = F.p_iva 
+WHERE B.Attiva = 'Y' 
+GROUP BY C.Posizione, F.Nome;
 
--- CREATE REGIONI MATERIALIZED VIEW
-CREATE MATERIALIZED VIEW REGIONI AS  
-SELECT REGIONE  
-FROM POSIZIONE  
-GROUP BY REGIONE  
+CREATE MATERIALIZED VIEW REGIONI AS   
+SELECT REGIONE   
+FROM POSIZIONE   
+GROUP BY REGIONE   
 ORDER BY REGIONE ASC;
 
--- CREATE attivazione bolletta PROCEDURE
-CREATE OR REPLACE PROCEDURE attivazione_bolletta 
-IS 
-	CURSOR curs IS SELECT * FROM BOLLETTA WHERE ATTIVA = 'N'; 
-	riga curs%ROWTYPE; 
-BEGIN 
-	OPEN curs; 
- 
-	LOOP 
-		FETCH curs INTO riga; 
-		EXIT WHEN curs%NOTFOUND; 
- 
-		UPDATE BOLLETTA 
-		SET ATTIVA = 'Y' 
-		WHERE CODCONTRATTO = riga.CODCONTRATTO AND MESE = riga.MESE AND ANNO = riga.ANNO; 
- 
-		DBMS_OUTPUT.PUT_LINE('Aggiornata bolletta: ' || riga.CODCONTRATTO); 
-	END LOOP; 
- 
-	CLOSE curs; 
-END; 
-/
-
--- CREATE elimina record PROCEDURE
-CREATE OR REPLACE PROCEDURE elimina_record IS  
-	CURSOR curs IS SELECT * FROM BOLLETTA WHERE to_char( sysdate, 'mm' ) > to_char(MESE) AND to_char( sysdate, 'yy' ) > to_char(ANNO);  
+CREATE OR REPLACE PROCEDURE attivazione_bolletta  
+IS  
+	CURSOR curs IS SELECT * FROM BOLLETTA WHERE ATTIVA = 'N';  
 	riga curs%ROWTYPE;  
 BEGIN  
 	OPEN curs;  
   
 	LOOP  
-    	FETCH curs INTO riga;  
-    	EXIT WHEN curs%NOTFOUND;  
+		FETCH curs INTO riga;  
+		EXIT WHEN curs%NOTFOUND;  
   
-    	DELETE FROM BOLLETTA WHERE riga.CODCONTRATTO = CODCONTRATTO AND riga.MESE = MESE AND riga.ANNO = ANNO;  
+		UPDATE BOLLETTA  
+		SET ATTIVA = 'Y'  
+		WHERE CODCONTRATTO = riga.CODCONTRATTO AND MESE = riga.MESE AND ANNO = riga.ANNO;  
   
+		DBMS_OUTPUT.PUT_LINE('Aggiornata bolletta: ' || riga.CODCONTRATTO);  
 	END LOOP;  
+  
+	CLOSE curs;  
 END;  
 /
 
--- CREATE update cost view TRIGGER
-CREATE OR REPLACE TRIGGER trg_update_cost 
-AFTER UPDATE ON BOLLETTA 
-DECLARE 
-    PRAGMA AUTONOMOUS_TRANSACTION; 
+CREATE OR REPLACE PROCEDURE elimina_record IS   
+	CURSOR curs IS SELECT * FROM BOLLETTA WHERE to_char( sysdate, 'mm' ) > to_char(MESE) AND to_char( sysdate, 'yy' ) > to_char(ANNO);   
+	riga curs%ROWTYPE;   
+BEGIN   
+	OPEN curs;   
+   
+	LOOP   
+    	FETCH curs INTO riga;   
+    	EXIT WHEN curs%NOTFOUND;   
+   
+    	DELETE FROM BOLLETTA WHERE riga.CODCONTRATTO = CODCONTRATTO AND riga.MESE = MESE AND riga.ANNO = ANNO;   
+   
+	END LOOP;   
+END;   
+/
+
+CREATE OR REPLACE PROCEDURE prc_update_cost IS 
 BEGIN 
-	EXEC dbms_mview.refresh('COSTI');
-	COMMIT; 
-END;
+    dbms_mview.refresh('COSTI'); 
+END; 
+/
+
+CREATE OR REPLACE TRIGGER trg_insert_bolletta 
+AFTER INSERT ON BOLLETTA 
+FOR EACH ROW 
+DECLARE  
+    cod_fornitore CONTRATTO.FORNITORE%TYPE; 
+	cod_posizione CONTRATTO.POSIZIONE%TYPE; 
+BEGIN 
+    IF (:NEW.ATTIVA = 'Y') THEN
+	SELECT c.fornitore, c.posizione INTO cod_fornitore, cod_posizione 
+    FROM CONTRATTO c  
+    WHERE c.codContratto = :NEW.codContratto; 
+     
+    UPDATE FORNITORE f 
+    SET f.NUM_BOLLETTE = (f.NUM_BOLLETTE + 1)  
+    WHERE f.p_iva = cod_fornitore; 
+ 
+	UPDATE POSIZIONE p 
+    SET p.NUM_BOLLETTE = (p.NUM_BOLLETTE + 1)  
+    WHERE p.PROVINCIA = cod_posizione; 
+    END IF;
+END; 
+/
+
+CREATE OR REPLACE TRIGGER trg_update_bolletta 
+AFTER UPDATE OF ATTIVA ON BOLLETTA 
+FOR EACH ROW 
+DECLARE  
+    cod_fornitore CONTRATTO.FORNITORE%TYPE; 
+	cod_posizione CONTRATTO.POSIZIONE%TYPE; 
+BEGIN 
+    SELECT c.fornitore, c.posizione INTO cod_fornitore, cod_posizione 
+    FROM CONTRATTO c  
+    WHERE c.codContratto = :NEW.codContratto; 
+
+    IF (:NEW.ATTIVA = 'Y') THEN
+        UPDATE FORNITORE f 
+        SET f.NUM_BOLLETTE = (f.NUM_BOLLETTE + 1)  
+        WHERE f.p_iva = cod_fornitore; 
+     
+    	UPDATE POSIZIONE p 
+        SET p.NUM_BOLLETTE = (p.NUM_BOLLETTE + 1)  
+        WHERE p.PROVINCIA = cod_posizione; 
+    ELSE
+        UPDATE FORNITORE f 
+    	SET f.NUM_BOLLETTE = (f.NUM_BOLLETTE - 1)  
+        WHERE f.p_iva = cod_fornitore; 
+     
+        UPDATE POSIZIONE p 
+        SET p.NUM_BOLLETTE = (p.NUM_BOLLETTE - 1)  
+        WHERE p.PROVINCIA = cod_posizione;
+	END IF;
+END; 
+
+
+CREATE OR REPLACE TRIGGER trg_delete_bolletta 
+AFTER DELETE ON BOLLETTA 
+FOR EACH ROW 
+DECLARE  
+    cod_fornitore CONTRATTO.FORNITORE%TYPE; 
+	cod_posizione CONTRATTO.POSIZIONE%TYPE; 
+BEGIN 
+	SELECT c.fornitore, c.posizione INTO cod_fornitore, cod_posizione 
+    FROM CONTRATTO c  
+    WHERE c.codContratto = :OLD.codContratto; 
+     
+    UPDATE FORNITORE f 
+    SET f.NUM_BOLLETTE = (f.NUM_BOLLETTE - 1)  
+    WHERE f.p_iva = cod_fornitore; 
+ 
+	UPDATE POSIZIONE p 
+    SET p.NUM_BOLLETTE = (p.NUM_BOLLETTE - 1)  
+    WHERE p.PROVINCIA = cod_posizione; 
+END; 
 /
 
 INSERT INTO Posizione(Provincia, Regione) VALUES ('CH', 'Abruzzo');
@@ -339,71 +424,65 @@ INSERT INTO Posizione(Provincia, Regione) VALUES ('VR', 'Veneto');
 
 INSERT INTO Posizione(Provincia, Regione) VALUES ('VI', 'Veneto');
 
-INSERT INTO FORNITORE VALUES (1, 'enel');
+INSERT INTO FORNITORE(p_iva, nome) VALUES (1, 'enel');
 
-INSERT INTO FORNITORE VALUES (2, 'Fastweb');
-
-INSERT INTO PERSONA VALUES (seq_persona.NEXTVAL, 'nick', 'name', 'surname', 0, 'SHA-256');
-
-INSERT INTO Bolletta(CodContratto, Prezzo, Consumo, Mese, Anno, Fornitore, Persona, Posizione, URL)
-VALUES (
-    1,
-    100.00, 
-    150.00,
-    1, 
-    2023, 
-    1, 
-    seq_persona.CURRVAL, 
-    'NA',
-    'http://example.com/bolletta_1'
-);
-
-
-INSERT INTO Bolletta(CodContratto, Prezzo, Consumo, Mese, Anno, Fornitore, Persona, Posizione, URL)
-VALUES (
-    1,
-    120.00,
-    180.00, 
-    2, 
-    2023, 
-    1, 
-    seq_persona.CURRVAL, 
-    'NA',
-    'http://example.com/bolletta_1'
-);
-
+INSERT INTO FORNITORE(p_iva, nome) VALUES (2, 'Fastweb');
 
 INSERT INTO PERSONA VALUES (seq_persona.NEXTVAL, 'nick2', 'name2', 'surname2', 0, 'SHA-256');
 
-
-INSERT INTO Bolletta(CodContratto, Prezzo, Consumo, Mese, Anno, Fornitore, Persona, Posizione, URL)
-VALUES (
-    2,
-    150.00,
-    130.00, 
-    1, 
-    2023, 
-    1, 
-    seq_persona.CURRVAL, 
-    'NA',
-    'http://example.com/bolletta_1'
+INSERT INTO CONTRATTO(CodContratto, Fornitore, Persona, Posizione) 
+VALUES( 
+    seq_contratti.NEXTVAL, 
+    1,  
+    seq_persona.CURRVAL,  
+    'NA' 
 );
 
+INSERT INTO CONTRATTO (CodContratto, Fornitore, Persona, Posizione) 
+VALUES( 
+    seq_contratti.NEXTVAL, 
+    2,  
+    seq_persona.CURRVAL,  
+    'MI' 
+);
 
-INSERT INTO Bolletta(CodContratto, Prezzo, Consumo, Mese, Anno, Fornitore, Persona, Posizione, URL)
-VALUES (
-    3,
-    200.00,
-    100.00, 
-    1, 
-    2023, 
+INSERT INTO Bolletta(CodContratto, Prezzo, Consumo, Mese, Anno, URL) 
+VALUES ( 
     2, 
-    seq_persona.CURRVAL, 
-    'MI',
-    'http://example.com/bolletta_1'
+    150.00, 
+    130.00,  
+    1, 
+    2023, 
+    'http://example.com/bolletta_1' 
 );
 
+INSERT INTO Bolletta(CodContratto, Prezzo, Consumo, Mese, Anno, URL) 
+VALUES ( 
+    1, 
+    200.00, 
+    100.00,  
+    1,  
+    2023, 
+    'http://example.com/bolletta_1' 
+);
 
 INSERT INTO PERSONA VALUES (seq_persona.NEXTVAL, 'nick3', 'name3', 'surname3', 1, 'SHA-256');
 
+SELECT * FROM BOLLETTA;
+
+SELECT * FROM PERSONA;
+
+SELECT * FROM COSTI;
+
+EXEC attivazione_bolletta()
+
+
+EXEC prc_update_cost()
+
+
+SELECT * FROM COSTI;
+
+SELECT * FROM FORNITORE;
+
+SELECT * FROM POSIZIONE WHERE NUM_BOLLETTE <> 0;
 
