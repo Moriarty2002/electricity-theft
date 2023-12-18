@@ -1,6 +1,6 @@
-<mxfile host="app.diagrams.net" modified="2023-12-18T09:21:49.934Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0" etag="Kx2c0WDX5xrgqKsT1I4r" version="22.1.11" type="github" pages="4">
+<mxfile host="app.diagrams.net" modified="2023-12-18T09:37:23.975Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0" etag="u_p1BGTDAXcWiXSZe2NL" version="22.1.11" type="github" pages="4">
   <diagram name="Schema Scheletro" id="E_TyFUatoE3oYiJs9Rrp">
-    <mxGraphModel dx="1050" dy="566" grid="1" gridSize="30" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="520" dy="615" grid="1" gridSize="30" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -475,7 +475,7 @@
     </mxGraphModel>
   </diagram>
   <diagram id="eOSI6jcM45gyWAoEbuhR" name="Schema logico">
-    <mxGraphModel dx="1050" dy="566" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="289" dy="351" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -512,7 +512,7 @@
         <mxCell id="OvsSiJeQa_0FQx_QVQP6-16" value="Provincia&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;pk" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" parent="OvsSiJeQa_0FQx_QVQP6-15" vertex="1">
           <mxGeometry y="30" width="140" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="OvsSiJeQa_0FQx_QVQP6-17" value="NomeProv" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" parent="OvsSiJeQa_0FQx_QVQP6-15" vertex="1">
+        <mxCell id="OvsSiJeQa_0FQx_QVQP6-17" value="Regione" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" parent="OvsSiJeQa_0FQx_QVQP6-15" vertex="1">
           <mxGeometry y="60" width="140" height="30" as="geometry" />
         </mxCell>
         <mxCell id="OvsSiJeQa_0FQx_QVQP6-18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;endArrow=ERmany;endFill=0;startArrow=ERmany;startFill=0;entryX=1.008;entryY=0.672;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="OvsSiJeQa_0FQx_QVQP6-16" target="OvsSiJeQa_0FQx_QVQP6-12" edge="1">
@@ -531,24 +531,6 @@
         </mxCell>
         <mxCell id="OvsSiJeQa_0FQx_QVQP6-22" value="Nome" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" parent="OvsSiJeQa_0FQx_QVQP6-20" vertex="1">
           <mxGeometry y="60" width="140" height="30" as="geometry" />
-        </mxCell>
-        <mxCell id="OvsSiJeQa_0FQx_QVQP6-23" value="Posizione" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-          <mxGeometry x="614" y="510" width="140" height="90" as="geometry" />
-        </mxCell>
-        <mxCell id="OvsSiJeQa_0FQx_QVQP6-24" value="Provincia&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;/span&gt;pk" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" parent="OvsSiJeQa_0FQx_QVQP6-23" vertex="1">
-          <mxGeometry y="30" width="140" height="30" as="geometry" />
-        </mxCell>
-        <mxCell id="OvsSiJeQa_0FQx_QVQP6-25" value="Regione" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" parent="OvsSiJeQa_0FQx_QVQP6-23" vertex="1">
-          <mxGeometry y="60" width="140" height="30" as="geometry" />
-        </mxCell>
-        <mxCell id="OvsSiJeQa_0FQx_QVQP6-26" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;endArrow=ERmany;endFill=0;startArrow=ERmany;startFill=0;" parent="1" source="OvsSiJeQa_0FQx_QVQP6-24" target="OvsSiJeQa_0FQx_QVQP6-16" edge="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="784" y="410" as="targetPoint" />
-            <Array as="points">
-              <mxPoint x="784" y="555" />
-              <mxPoint x="784" y="405" />
-            </Array>
-          </mxGeometry>
         </mxCell>
         <mxCell id="OvsSiJeQa_0FQx_QVQP6-27" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;endArrow=ERmany;endFill=0;startArrow=ERmany;startFill=0;" parent="1" source="OvsSiJeQa_0FQx_QVQP6-21" target="OvsSiJeQa_0FQx_QVQP6-9" edge="1">
           <mxGeometry relative="1" as="geometry">
@@ -569,7 +551,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="OvsSiJeQa_0FQx_QVQP6-28" value="Bolletta" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-          <mxGeometry x="314" y="130" width="140" height="180" as="geometry" />
+          <mxGeometry x="314" y="100" width="140" height="210" as="geometry" />
         </mxCell>
         <mxCell id="OvsSiJeQa_0FQx_QVQP6-29" value="Cod.Contratto&amp;nbsp;&amp;nbsp;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;pk" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" parent="OvsSiJeQa_0FQx_QVQP6-28" vertex="1">
           <mxGeometry y="30" width="140" height="30" as="geometry" />
@@ -585,6 +567,9 @@
         </mxCell>
         <mxCell id="OvsSiJeQa_0FQx_QVQP6-33" value="Consumo" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" parent="OvsSiJeQa_0FQx_QVQP6-28" vertex="1">
           <mxGeometry y="150" width="140" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="6QJggjPrUhTn8TyeiIVU-1" value="Attiva" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="OvsSiJeQa_0FQx_QVQP6-28">
+          <mxGeometry y="180" width="140" height="30" as="geometry" />
         </mxCell>
         <mxCell id="OvsSiJeQa_0FQx_QVQP6-36" value="&lt;h1&gt;Accorgimenti&lt;/h1&gt;&lt;p&gt;Nello schema attuale abbiamo introdotto un ulteriore tabella &quot;Contratto&quot;, che ci permette di evitare dei problemi di ridondanza e aggiornamento correlari alla bolletta.&lt;/p&gt;&lt;p&gt;Ci siamo accorti di tale problema nella fase di progettazione logica e quindi abbiamo oprato per tale opzione.&lt;/p&gt;&lt;p&gt;Essa è stata decisa per evitare i problemi precedentemente citati, dovuti a una disnormalizzazione della tabella &quot;Bolletta&quot; presente in maniera centrale nel nostro progetto&lt;/p&gt;" style="text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;" parent="1" vertex="1">
           <mxGeometry x="20" y="80" width="250" height="250" as="geometry" />
