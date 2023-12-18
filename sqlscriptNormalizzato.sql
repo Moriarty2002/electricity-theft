@@ -389,17 +389,21 @@ VALUES (
 
 INSERT INTO PERSONA VALUES (seq_persona.NEXTVAL, 'nick2', 'name2', 'surname2', 0, 'SHA-256');
 
+INSERT INTO CONTRATTO(CodContratto, Fornitore, Persona, Posizione)
+VALUES(
+    2,
+    1, 
+    seq_persona.CURRVAL, 
+    'NA'
+);
 
-INSERT INTO Bolletta(CodContratto, Prezzo, Consumo, Mese, Anno, Fornitore, Persona, Posizione, URL)
+INSERT INTO Bolletta(CodContratto, Prezzo, Consumo, Mese, Anno, URL)
 VALUES (
     2,
     150.00,
     130.00, 
-    1, 
-    2023, 
-    1, 
-    seq_persona.CURRVAL, 
-    'NA',
+    1,
+    2023,
     'http://example.com/bolletta_1'
 );
 
