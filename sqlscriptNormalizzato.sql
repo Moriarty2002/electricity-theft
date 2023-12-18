@@ -51,7 +51,7 @@ CREATE TABLE Persona(
 CREATE TABLE CONTRATTO(
     CodContratto    INT,
     Fornitore   INT,
-    Posizione   CHAR(2),
+    Posizione   VARCHAR(2),
     Persona INT,
     CONSTRAINT pk_contratto PRIMARY KEY(CodContratto),
     CONSTRAINT fk_contratto_fornitore FOREIGN KEY(Fornitore) REFERENCES FORNITORE(p_iva),
@@ -70,7 +70,7 @@ CREATE TABLE Bolletta(
     CONSTRAINT pk_bolletta PRIMARY KEY(CodContratto, Mese, Anno),
     CONSTRAINT fk_bolletta_contratto FOREIGN KEY(CodContratto) REFERENCES CONTRATTO(CodContratto),
     CONSTRAINT k_mese CHECK(Mese < 13 AND Mese > 0), 
-    CONSTRAINT k_anno CHECK(Anno > 0) 
+    CONSTRAINT k_anno CHECK(Anno > 0)
 );
 
 -- CREATE COSTI MATERIALIZED VIEW
@@ -79,7 +79,8 @@ SELECT C.Posizione, F.Nome, SUM(B.Prezzo)/SUM(B.Consumo)
 FROM Bolletta B
 JOIN CONTRATTO C ON B.CodContratto = C.CodContratto
 JOIN FORNITORE F ON C.Fornitore = F.p_iva
-GROUP BY C.Posizione, F.Nome
+WHERE B.Attiva = 'Y'
+GROUP BY C.Posizione, F.Nome;
 
 -- CREATE REGIONI MATERIALIZED VIEW
 CREATE MATERIALIZED VIEW REGIONI AS  
@@ -357,44 +358,22 @@ INSERT INTO FORNITORE VALUES (1, 'enel');
 
 INSERT INTO FORNITORE VALUES (2, 'Fastweb');
 
-INSERT INTO PERSONA VALUES (seq_persona.NEXTVAL, 'nick', 'name', 'surname', 0, 'SHA-256');
-
-INSERT INTO Bolletta(CodContratto, Prezzo, Consumo, Mese, Anno, Fornitore, Persona, Posizione, URL)
-VALUES (
-    1,
-    100.00, 
-    150.00,
-    1, 
-    2023, 
-    1, 
-    seq_persona.CURRVAL, 
-    'NA',
-    'http://example.com/bolletta_1'
-);
-
-
-INSERT INTO Bolletta(CodContratto, Prezzo, Consumo, Mese, Anno, Fornitore, Persona, Posizione, URL)
-VALUES (
-    1,
-    120.00,
-    180.00, 
-    2, 
-    2023, 
-    1, 
-    seq_persona.CURRVAL, 
-    'NA',
-    'http://example.com/bolletta_1'
-);
-
-
 INSERT INTO PERSONA VALUES (seq_persona.NEXTVAL, 'nick2', 'name2', 'surname2', 0, 'SHA-256');
 
 INSERT INTO CONTRATTO(CodContratto, Fornitore, Persona, Posizione)
 VALUES(
-    2,
+    seq_contratti.NEXTVAL,
     1, 
     seq_persona.CURRVAL, 
     'NA'
+);
+
+INSERT INTO CONTRATTO (CodContratto, Fornitore, Persona, Posizione)
+VALUES(
+    seq_contratti.NEXTVAL,
+    2, 
+    seq_persona.CURRVAL, 
+    'MI'
 );
 
 INSERT INTO Bolletta(CodContratto, Prezzo, Consumo, Mese, Anno, URL)
@@ -408,20 +387,15 @@ VALUES (
 );
 
 
-INSERT INTO Bolletta(CodContratto, Prezzo, Consumo, Mese, Anno, Fornitore, Persona, Posizione, URL)
+INSERT INTO Bolletta(CodContratto, Prezzo, Consumo, Mese, Anno, URL)
 VALUES (
-    3,
+    1,
     200.00,
     100.00, 
     1, 
-    2023, 
-    2, 
-    seq_persona.CURRVAL, 
-    'MI',
+    2023,
     'http://example.com/bolletta_1'
 );
 
 
 INSERT INTO PERSONA VALUES (seq_persona.NEXTVAL, 'nick3', 'name3', 'surname3', 1, 'SHA-256');
-
-
