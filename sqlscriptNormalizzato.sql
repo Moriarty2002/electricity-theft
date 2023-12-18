@@ -16,6 +16,15 @@ NOMINVALUE
 NOCYCLE  
 NOCACHE;
 
+--Sequenza per i codici contratto (non dipendono dal fornitore)
+CREATE SEQUENCE seq_contratti
+INCREMENT BY 1
+START WITH 1
+NOMAXVALUE
+NOMINVALUE
+NOCYCLE
+NOCACHE;
+
 
 CREATE TABLE Fornitore(   
     p_iva int,   
@@ -39,6 +48,17 @@ CREATE TABLE Persona(
     CONSTRAINT pk_persona PRIMARY KEY(IdPersona)   
 );
 
+CREATE TABLE CONTRATTO(
+    CodContratto    INT,
+    Fornitore   INT,
+    Posizione   CHAR(2),
+    Persona INT,
+    CONSTRAINT pk_contratto PRIMARY KEY(CodContratto),
+    CONSTRAINT fk_contratto_fornitore FOREIGN KEY(Fornitore) REFERENCES FORNITORE(p_iva),
+    CONSTRAINT fk_contratto_posizione FOREIGN KEY(Posizione) REFERENCES POSIZIONE(Provincia),
+    CONSTRAINT fk_contratto_persona FOREIGN KEY(Persona) REFERENCES PERSONA(IdPersona)
+);
+
 CREATE TABLE Bolletta(   
     CodContratto INT,   
     Prezzo  DECIMAL NOT NULL,   
@@ -48,42 +68,18 @@ CREATE TABLE Bolletta(
     Attiva  CHAR(1) DEFAULT 'N',  
     URL	VARCHAR(32),  
     CONSTRAINT pk_bolletta PRIMARY KEY(CodContratto, Mese, Anno),
+    CONSTRAINT fk_bolletta_contratto FOREIGN KEY(CodContratto) REFERENCES CONTRATTO(CodContratto),
     CONSTRAINT k_mese CHECK(Mese < 13 AND Mese > 0), 
     CONSTRAINT k_anno CHECK(Anno > 0) 
 );
 
-CREATE TABLE Erogazione(
-    codContratto	INT NOT NULL,
-    codFornitore	INT NOT NULL,
-	CONSTRAINT pk_fornitura PRIMARY KEY(codContratto),
-    CONSTRAINT fk_fornitura FOREIGN KEY(codContratto) REFERENCES Bolletta(CodContratto),
-    CONSTRAINT fk_fornitore_fornitura FOREIGN KEY(codFornitore) REFERENCES Fornitore
-);
-
-CREATE TABLE Localizzazione(
-    codContratto	INT NOT NULL,
-    codPosizione	CHAR(2) NOT NULL,
-    CONSTRAINT pk_localizzazione PRIMARY KEY(codContratto),
-    CONSTRAINT fk_localizzazioe_contratto FOREIGN KEY(codContratto) REFERENCES Bolletta(CodContratto),
-    CONSTRAINT fk_localizzazione_posizione FOREIGN KEY(codPosizione) REFERENCES Posizione(Provincia)
-);
-
-CREATE TABLE Inserimento(
-    codContratto	INT NOT NULL,
-    codPersona	INT NOT NULL,
-    CONSTRAINT pk_Inserimento PRIMARY KEY(codContratto),
-    CONSTRAINT fk_inserimento_contratto FOREIGN KEY(codContratto) REFERENCES Bolletta(CodContratto),
-    CONSTRAINT fk_inserimento_persona FOREIGN KEY(codPersona) REFERENCES Persona(IdPersona)
-);
-
 -- CREATE COSTI MATERIALIZED VIEW
 CREATE MATERIALIZED VIEW COSTI AS   
-SELECT L.codProvincia, F.Nome, AVG(B.Prezzo)/AVG(B.Consumo)
+SELECT C.Posizione, F.Nome, AVG(B.Prezzo)/AVG(B.Consumo)
 FROM Bolletta B
-JOIN Erogazione E on E.codContratto = B.CodContratto
-JOIN Localizzazione L on L.codContratto = B.CodContratto
-GROUP BY L.codProvincia
-WHERE B.Attiva = 'Y'
+JOIN CONTRATTO C ON B.CodContratto = C.CodContratto
+JOIN FORNITORE F ON C.Fornitore = F.p_iva
+GROUP BY F.Nome
 
 -- CREATE REGIONI MATERIALIZED VIEW
 CREATE MATERIALIZED VIEW REGIONI AS  
