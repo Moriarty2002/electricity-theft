@@ -51,7 +51,7 @@ CREATE TABLE Persona(
 );
 
 CREATE TABLE CONTRATTO( 
-    CodContratto    INT, 
+    CodContratto    INT DEFAULT seq_contratti.NEXTVAL, 
     Fornitore   INT, 
     Posizione   VARCHAR(2), 
     Persona INT, 
@@ -196,17 +196,19 @@ DECLARE
     cod_fornitore CONTRATTO.FORNITORE%TYPE; 
 	cod_posizione CONTRATTO.POSIZIONE%TYPE; 
 BEGIN 
+    IF (:OLD.attiva = 'Y') THEN
 	SELECT c.fornitore, c.posizione INTO cod_fornitore, cod_posizione 
-    FROM CONTRATTO c  
-    WHERE c.codContratto = :OLD.codContratto; 
+        FROM CONTRATTO c  
+        WHERE c.codContratto = :OLD.codContratto; 
      
-    UPDATE FORNITORE f 
-    SET f.NUM_BOLLETTE = (f.NUM_BOLLETTE - 1)  
-    WHERE f.p_iva = cod_fornitore; 
+        UPDATE FORNITORE f 
+        SET f.NUM_BOLLETTE = (f.NUM_BOLLETTE - 1)  
+         WHERE f.p_iva = cod_fornitore; 
  
 	UPDATE POSIZIONE p 
-    SET p.NUM_BOLLETTE = (p.NUM_BOLLETTE - 1)  
-    WHERE p.PROVINCIA = cod_posizione; 
+        SET p.NUM_BOLLETTE = (p.NUM_BOLLETTE - 1)  
+        WHERE p.PROVINCIA = cod_posizione; 
+    END IF;
 END; 
 /
 
