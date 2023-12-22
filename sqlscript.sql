@@ -7,6 +7,7 @@ REM   start
 REM   Script electrical theft - progetto Basi di Dati (prof. Chianese)
 
 
+-- Sequenza per ID persona
 CREATE SEQUENCE seq_persona   
 INCREMENT BY 1   
 START WITH 1   
@@ -15,6 +16,7 @@ NOMINVALUE
 NOCYCLE   
 NOCACHE;
 
+-- Sequenza per ID contratto
 CREATE SEQUENCE seq_contratti 
 INCREMENT BY 1 
 START WITH 1 
@@ -26,7 +28,7 @@ NOCACHE;
 CREATE TABLE Fornitore(    
     p_iva int,    
     Nome VARCHAR(50) NOT NULL,    
-    Num_bollette NUMBER DEFAULT 0, 
+    Num_bollette NUMBER DEFAULT 0, -- dato ridondante
      
     CONSTRAINT pk_fornitore PRIMARY KEY(p_iva)    
 );
@@ -34,7 +36,7 @@ CREATE TABLE Fornitore(
 CREATE TABLE Posizione(     
     Provincia   VARCHAR(2),     
     Regione     VARCHAR(30) NOT NULL,        
-    Num_bollette NUMBER DEFAULT 0, 
+    Num_bollette NUMBER DEFAULT 0, -- dato ridondante
      
     CONSTRAINT pk_posizione PRIMARY KEY(Provincia)     
 );
@@ -44,8 +46,8 @@ CREATE TABLE Persona(
     NickName    VARCHAR(30),   
     Nome        VARCHAR(30) NOT NULL,    
     Cognome     VARCHAR(30) NOT NULL,    
-    TipologiaUtente CHAR(1) NOT NULL,    
-    Password    VARCHAR(64), -- for SHA-256   
+    TipologiaUtente CHAR(1) NOT NULL, -- Utente Attivo o Admin
+    Password    VARCHAR(64), -- password salvate con codifica SHA-256   
      
     CONSTRAINT pk_persona PRIMARY KEY(IdPersona)    
 );
@@ -77,23 +79,26 @@ CREATE TABLE Bolletta(
     CONSTRAINT k_anno CHECK(Anno > 0) 
 );
 
+-- Vista Costi medi in kWh per fornitore in una posizione
 CREATE MATERIALIZED VIEW COSTI AS    
-SELECT C.Posizione, F.Nome, TRUNC(SUM(B.Prezzo)/SUM(B.Consumo), 2) AS CONSUMO_IN_KWH 
+SELECT C.Posizione, F.Nome, TRUNC(SUM(B.Prezzo)/SUM(B.Consumo), 2) AS CONSUMO_IN_KWH -- Trunc per avere max. 2 decimali
 FROM Bolletta B 
 JOIN CONTRATTO C ON B.CodContratto = C.CodContratto 
 JOIN FORNITORE F ON C.Fornitore = F.p_iva 
 WHERE B.Attiva = 'Y' 
 GROUP BY C.Posizione, F.Nome;
 
+-- Vista Regioni per UI del bot
 CREATE MATERIALIZED VIEW REGIONI AS   
 SELECT REGIONE   
 FROM POSIZIONE   
 GROUP BY REGIONE   
 ORDER BY REGIONE ASC;
 
+-- Procedure attivazione bollette disattiva
 CREATE OR REPLACE PROCEDURE attivazione_bolletta  
 IS  
-	CURSOR curs IS SELECT * FROM BOLLETTA WHERE ATTIVA = 'N';  
+	CURSOR curs IS SELECT * FROM BOLLETTA WHERE ATTIVA = 'N';  -- SELECT tutte le bollette disattive
 	riga curs%ROWTYPE;  
 BEGIN  
 	OPEN curs;  
@@ -105,7 +110,8 @@ BEGIN
 		UPDATE BOLLETTA  
 		SET ATTIVA = 'Y'  
 		WHERE CODCONTRATTO = riga.CODCONTRATTO AND MESE = riga.MESE AND ANNO = riga.ANNO;  
-  
+                -- Bisogna usare anche il mese e l'anno dato che ad un contratto possono essere associate più bollette
+
 		DBMS_OUTPUT.PUT_LINE('Aggiornata bolletta: ' || riga.CODCONTRATTO);  
 	END LOOP;  
   
@@ -113,6 +119,7 @@ BEGIN
 END;  
 /
 
+-- Procedure eliminazione bollette con più di 12 mesi
 CREATE OR REPLACE PROCEDURE elimina_record IS   
 	CURSOR curs IS SELECT * FROM BOLLETTA WHERE to_char( sysdate, 'mm' ) > to_char(MESE) AND to_char( sysdate, 'yy' ) > to_char(ANNO);   
 	riga curs%ROWTYPE;   
@@ -129,12 +136,14 @@ BEGIN
 END;   
 /
 
+-- Procedure per il refresh della vista schedulato
 CREATE OR REPLACE PROCEDURE prc_update_cost IS 
 BEGIN 
-    dbms_mview.refresh('COSTI'); 
-END; 
+    dbms_mview.refresh('COSTI'); -- Comando specifico del DBMS
+END;  
 /
 
+-- Trigger inserimento bolletta per aggiornare dati ridondanti
 CREATE OR REPLACE TRIGGER trg_insert_bolletta 
 AFTER INSERT ON BOLLETTA 
 FOR EACH ROW 
@@ -142,7 +151,7 @@ DECLARE
     cod_fornitore CONTRATTO.FORNITORE%TYPE; 
 	cod_posizione CONTRATTO.POSIZIONE%TYPE; 
 BEGIN 
-    IF (:NEW.ATTIVA = 'Y') THEN
+    IF (:NEW.ATTIVA = 'Y') THEN -- Incremento solo nel caso in cui la bolletta inserita sia già attiva (solo l'admin può farlo)
 	SELECT c.fornitore, c.posizione INTO cod_fornitore, cod_posizione 
     FROM CONTRATTO c  
     WHERE c.codContratto = :NEW.codContratto; 
@@ -158,6 +167,7 @@ BEGIN
 END; 
 /
 
+-- Trigger update stato attiva/disattiva bolletta per campi ridondanti
 CREATE OR REPLACE TRIGGER trg_update_bolletta 
 AFTER UPDATE OF ATTIVA ON BOLLETTA 
 FOR EACH ROW 
@@ -169,7 +179,7 @@ BEGIN
     FROM CONTRATTO c  
     WHERE c.codContratto = :NEW.codContratto; 
 
-    IF (:NEW.ATTIVA = 'Y') THEN
+    IF (:NEW.ATTIVA = 'Y') THEN -- Se la bolletta viene attivata, incrementiamo campi ridondanti
         UPDATE FORNITORE f 
         SET f.NUM_BOLLETTE = (f.NUM_BOLLETTE + 1)  
         WHERE f.p_iva = cod_fornitore; 
@@ -177,7 +187,7 @@ BEGIN
     	UPDATE POSIZIONE p 
         SET p.NUM_BOLLETTE = (p.NUM_BOLLETTE + 1)  
         WHERE p.PROVINCIA = cod_posizione; 
-    ELSE
+    ELSE -- Se la bolletta viene disattivata, decrementiamo campi ridondanti
         UPDATE FORNITORE f 
     	SET f.NUM_BOLLETTE = (f.NUM_BOLLETTE - 1)  
         WHERE f.p_iva = cod_fornitore; 
@@ -189,6 +199,7 @@ BEGIN
 END; 
 
 
+-- Trigger delete bolletta per aggiornamento campi ridondanti
 CREATE OR REPLACE TRIGGER trg_delete_bolletta 
 AFTER DELETE ON BOLLETTA 
 FOR EACH ROW 
@@ -196,7 +207,7 @@ DECLARE
     cod_fornitore CONTRATTO.FORNITORE%TYPE; 
 	cod_posizione CONTRATTO.POSIZIONE%TYPE; 
 BEGIN 
-    IF (:OLD.attiva = 'Y') THEN
+    IF (:OLD.attiva = 'Y') THEN -- Decrementiamo i campi ridondanti solo se la bolletta era attiva
 	SELECT c.fornitore, c.posizione INTO cod_fornitore, cod_posizione 
         FROM CONTRATTO c  
         WHERE c.codContratto = :OLD.codContratto; 
