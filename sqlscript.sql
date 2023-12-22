@@ -1,5 +1,7 @@
-REM   Script: Electrical Theft Definitive
-REM   w
+REM   Script: Electrical Theft (Elaborato Basi di Dati)
+REM   Realizzato da: 
+D'amora Agostino N46006564 -
+Esposito Marcello N46006315
 
 REM   start 
 
@@ -73,7 +75,7 @@ CREATE TABLE Bolletta(
     Attiva  CHAR(1) DEFAULT 'N',   
     URL	VARCHAR(32),   
      
-    CONSTRAINT pk_bolletta PRIMARY KEY(CodContratto, Mese, Anno), 
+    CONSTRAINT pk_bolletta PRIMARY KEY(CodContratto, Mese, Anno),  -- Bisogna usare anche il mese e l'anno dato che ad un contratto possono essere associate più bollette
     CONSTRAINT fk_bolletta_contratto FOREIGN KEY(CodContratto) REFERENCES CONTRATTO(CodContratto), 
     CONSTRAINT k_mese CHECK(Mese < 13 AND Mese > 0),  
     CONSTRAINT k_anno CHECK(Anno > 0) 
@@ -81,7 +83,7 @@ CREATE TABLE Bolletta(
 
 -- Vista Costi medi in kWh per fornitore in una posizione
 CREATE MATERIALIZED VIEW COSTI AS    
-SELECT C.Posizione, F.Nome, TRUNC(SUM(B.Prezzo)/SUM(B.Consumo), 2) AS CONSUMO_IN_KWH -- Trunc per avere max. 2 decimali
+SELECT C.Posizione AS Citta, F.Nome AS Fornitore, TRUNC(SUM(B.Prezzo)/SUM(B.Consumo), 2) AS Prezzo_in_kWh -- Trunc per avere max. 2 decimali
 FROM Bolletta B 
 JOIN CONTRATTO C ON B.CodContratto = C.CodContratto 
 JOIN FORNITORE F ON C.Fornitore = F.p_iva 
@@ -110,7 +112,6 @@ BEGIN
 		UPDATE BOLLETTA  
 		SET ATTIVA = 'Y'  
 		WHERE CODCONTRATTO = riga.CODCONTRATTO AND MESE = riga.MESE AND ANNO = riga.ANNO;  
-                -- Bisogna usare anche il mese e l'anno dato che ad un contratto possono essere associate più bollette
 
 		DBMS_OUTPUT.PUT_LINE('Aggiornata bolletta: ' || riga.CODCONTRATTO);  
 	END LOOP;  
@@ -223,6 +224,7 @@ BEGIN
 END; 
 /
 
+-- INIZIO OPERAZIONI DML
 INSERT INTO Posizione(Provincia, Regione) VALUES ('CH', 'Abruzzo');
 
 INSERT INTO Posizione(Provincia, Regione) VALUES ('AQ', 'Abruzzo');
@@ -437,6 +439,14 @@ INSERT INTO Posizione(Provincia, Regione) VALUES ('VR', 'Veneto');
 
 INSERT INTO Posizione(Provincia, Regione) VALUES ('VI', 'Veneto');
 
+-- Refresh view Regioni
+EXEC dbms_mview.refresh('REGIONI');
+
+
+-- SELECT REGIONI
+SELECT * FROM REGIONI
+
+
 INSERT INTO FORNITORE(p_iva, nome) VALUES (1, 'enel');
 
 INSERT INTO FORNITORE(p_iva, nome) VALUES (2, 'Fastweb');
@@ -459,6 +469,17 @@ VALUES(
     'MI' 
 );
 
+INSERT INTO PERSONA VALUES (seq_persona.NEXTVAL, 'nick3', 'name3', 'surname3', 1, 'SHA-256');
+
+INSERT INTO CONTRATTO (CodContratto, Fornitore, Persona, Posizione) 
+VALUES( 
+    seq_contratti.NEXTVAL, 
+    2,  
+    seq_persona.CURRVAL,  
+    'NA' 
+);
+
+
 INSERT INTO Bolletta(CodContratto, Prezzo, Consumo, Mese, Anno, URL) 
 VALUES ( 
     2, 
@@ -466,9 +487,10 @@ VALUES (
     130.00,  
     1, 
     2023, 
-    'http://example.com/bolletta_1' 
+    '/example.com/bolletta_1' 
 );
 
+-- Inserimenti Napoli (contratti 1 e 3)
 INSERT INTO Bolletta(CodContratto, Prezzo, Consumo, Mese, Anno, URL) 
 VALUES ( 
     1, 
@@ -476,26 +498,46 @@ VALUES (
     100.00,  
     1,  
     2023, 
-    'http://example.com/bolletta_1' 
+    '/example.com/bolletta' 
 );
 
-INSERT INTO PERSONA VALUES (seq_persona.NEXTVAL, 'nick3', 'name3', 'surname3', 1, 'SHA-256');
+INSERT INTO Bolletta(CodContratto, Prezzo, Consumo, Mese, Anno, URL) 
+VALUES ( 
+    3, 
+    500, 
+    100,  
+    1, 
+    2023, 
+    '/example.com/bolletta_1' 
+)
 
+
+-- BOLLETTE STATO INIZIALE
 SELECT * FROM BOLLETTA;
 
 SELECT * FROM PERSONA;
 
+-- VISTA COSTI NON AGGIORNATA
 SELECT * FROM COSTI;
 
+-- ATTIVAZIONE BOLLETTE
 EXEC attivazione_bolletta()
 
 
+-- AGGIORNAMENTO VISTA COSTI
 EXEC prc_update_cost()
 
 
+-- Vista costi aggiornata
 SELECT * FROM COSTI;
 
+-- Select fornitori con ridondanza aggiornata
 SELECT * FROM FORNITORE;
 
+-- Select posizioni con ridondanza aggiornata
 SELECT * FROM POSIZIONE WHERE NUM_BOLLETTE <> 0;
+
+-- Visualizzazione Costi medi in kWh dei fornitori a Napoli
+SELECT * FROM COSTI WHERE CITTA = 'NA'
+
 
